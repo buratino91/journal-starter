@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
-from api.repositories.interface_repository import DatabaseInterface
+from repositories.interface_repository import DatabaseInterface
 
 load_dotenv()
 

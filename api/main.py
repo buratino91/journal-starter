@@ -1,7 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from dotenv import load_dotenv
 from routers.journal_router import router as journal_router
-import logging
+from core.logging import setup_logging
 
 load_dotenv()
 
@@ -16,6 +16,9 @@ load_dotenv()
 app = FastAPI(title="Journal API", description="A simple journal API for tracking daily work, struggles, and intentions")
 app.include_router(journal_router)
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+setup_logging()
 
-logging.info("Journal application started.")
+@app.get("/")
+def read_root():
+    return Response("Server is running.")
+

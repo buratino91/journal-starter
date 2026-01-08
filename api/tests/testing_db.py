@@ -12,7 +12,7 @@ from api.main import app
 async def test_db():
     # Create test db connection
     conn = await asyncpg.connect(
-        host='127.0.0.1',
+        host='postgres',
         database='test_db',
         user='test',
         password='test'

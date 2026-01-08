@@ -20,5 +20,7 @@ setup_logging()
 
 @app.get("/")
 def read_root():
-    return Response("Server is running.")
+    return {
+        "message": "Server is running."
+    }
 

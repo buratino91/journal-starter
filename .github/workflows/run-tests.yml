@@ -25,7 +25,7 @@ jobs:
 
       - name: Start database
         run: |
-          docker compose up -d psotgres
+          docker compose up -d postgres
           docker compose exec -T postgres bash -c 'until pg_isready -U test; do sleep 1; done'
 
       - name: Test with pytest

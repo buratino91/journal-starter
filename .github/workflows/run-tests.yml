@@ -7,7 +7,6 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   run_tests:
     name: Run tests using pytest
     runs-on: ubuntu-latest
@@ -19,11 +18,23 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.14.x'
+
       - name: Install dependencies
         run: |
           pip install -r api/requirements.txt
 
-      - name: Test with pytest
+      -name: Start database
         run: |
-          docker compose up -d
+          docker compose up -d psotgres
+          docker compose exec -T postgres bash -c 'until pg_isready -U test; do sleep 1; done'
+
+      - name: Test with pytest
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/test_db
+        run: |
           pytest 
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker compose down

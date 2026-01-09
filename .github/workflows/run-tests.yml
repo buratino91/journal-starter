@@ -1,0 +1,29 @@
+name: Run pytest CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  run_tests:
+    name: Run tests using pytest
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout the repo
+        uses: actions/checkout@v5
+
+      - name: Set up python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14.x'
+      - name: Install dependencies
+        run: |
+          pip install -r api/requirements.txt
+
+      - name: Test with pytest
+        run: |
+          docker compose up
+          pytest 

@@ -8,3 +8,4 @@ asyncpg
 pytest
 pytest-asyncio
 httpx
+prometheus-client

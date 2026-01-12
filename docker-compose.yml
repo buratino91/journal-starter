@@ -2,7 +2,7 @@ name: postgresdb
 
 services:
   postgres:
-    image: postgres:17
+    image: glen912/l2c-postgres:latest
     ports:
       - "5432:5432"
     environment:

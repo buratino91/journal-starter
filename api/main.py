@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from routers.journal_router import router as journal_router
 from core.logging import setup_logging
 from prometheus_client import make_asgi_app
+from core.monitoring import request_counter
 
 load_dotenv()
 
@@ -24,6 +25,7 @@ setup_logging()
 
 @app.get("/")
 def read_root():
+    request_counter.labels(endpoint="/").inc()
     return {
         "message": "Server is running."
     }

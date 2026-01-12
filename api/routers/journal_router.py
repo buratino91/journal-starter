@@ -5,6 +5,7 @@ from repositories.postgres_repository import PostgresDB
 from services.entry_service import EntryService
 from models.entry import Entry, EntryCreate
 import json
+from core.monitoring import request_counter, entry_gauge
 
 
 router = APIRouter()
@@ -51,6 +52,8 @@ async def get_all_entries(entry_service: EntryService = Depends(get_entry_servic
     """Get all journal entries."""
     try:
         entries = await entry_service.get_all_entries()
+        request_counter.labels('get', '/entries').inc()
+        entry_gauge.set(len(entries))
         return {"entries": entries, "count": len(entries)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving entries: {str(e)}")

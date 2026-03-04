@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from api.models.entry import Entry, EntryCreate
 from api.repositories.postgres_repository import PostgresDB
 from api.services.entry_service import EntryService
+from api.services.llm_service import analyze_journal_entry
 
 router = APIRouter()
 
@@ -65,7 +66,11 @@ async def get_entry(entry_id: str, entry_service: EntryService = Depends(get_ent
 
     Hint: Check the update_entry endpoint for similar patterns
     """
-    raise HTTPException(status_code=501, detail="Not implemented - complete this endpoint!")
+    result = await entry_service.get_entry(entry_id)
+    if not result:
+
+        raise HTTPException(status_code=404, detail=f"Entry {entry_id} not found")
+    return result
 
 @router.patch("/entries/{entry_id}")
 async def update_entry(entry_id: str, entry_update: dict, entry_service: EntryService = Depends(get_entry_service)):
@@ -95,7 +100,15 @@ async def delete_entry(entry_id: str, entry_service: EntryService = Depends(get_
 
     Hint: Look at how the update_entry endpoint checks for existence
     """
-    raise HTTPException(status_code=501, detail="Not implemented - complete this endpoint!")
+    result = await entry_service.get_entry(entry_id)
+    if not result:
+        raise HTTPException(status_code=404, detail=f"Entry {entry_id} not found.")
+
+    await entry_service.delete_entry(entry_id)
+
+    return {
+        "detail": "Entry deleted successfully!"
+    }
 
 @router.delete("/entries")
 async def delete_all_entries(entry_service: EntryService = Depends(get_entry_service)):
@@ -137,4 +150,24 @@ async def analyze_entry(entry_id: str, entry_service: EntryService = Depends(get
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
     """
-    raise HTTPException(status_code=501, detail="Implement this endpoint - see Learn to Cloud curriculum")
+    result = await entry_service.get_entry(entry_id)
+    if not result:
+        raise HTTPException(status_code=404, detail=f"Entry {entry_id} not found.")
+
+    try:
+        entry_text = result["work"] + " " + result["struggle"] + " " + result["intention"]
+        analysis = await analyze_journal_entry(entry_id, entry_text)
+    except NotImplementedError:
+        raise HTTPException(status_code=501, detail="LLM analysis not yet implemented")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+
+
+    return {
+        "entry_id": analysis["entry_id"],
+        "sentiment": analysis["sentiment"],
+        "summary": analysis["summary"],
+        "topics": analysis["topics"],
+        "created_at": result["created_at"],
+
+    }

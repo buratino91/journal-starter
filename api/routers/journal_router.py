@@ -137,4 +137,26 @@ async def analyze_entry(entry_id: str, entry_service: EntryService = Depends(get
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
     """
-    raise HTTPException(status_code=501, detail="Implement this endpoint - see Learn to Cloud curriculum")
+    result = await entry_service.get_entry(entry_id)
+    if not result:
+        raise HTTPException(status_code=404, detail=f"Entry {entry_id} not found.")
+
+    entry_text = result["work"] + " " + result["struggle"] + " " + result["intention"]
+
+    try:
+        analysis = await analyze_journal_entry(entry_id, entry_text)
+
+
+        return {
+            "entry_id": analysis["entry_id"],
+            "sentiment": analysis["sentiment"],
+            "summary": analysis["summary"],
+            "topics": analysis["topics"],
+            "created_at": result["created_at"],
+        }
+    except NotImplementedError:
+        raise HTTPException(status_code=501, detail="LLM analysis not yet implemented")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+
+

@@ -169,8 +169,6 @@ async def analyze_entry(entry_id: str, entry_service: EntryService = Depends(get
             "topics": analysis["topics"],
             "created_at": result["created_at"],
         }
-    except NotImplementedError:
-        raise HTTPException(status_code=501, detail="LLM analysis not yet implemented")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
 

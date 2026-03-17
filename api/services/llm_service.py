@@ -1,9 +1,10 @@
+import os
 
-# TODO: Import your chosen LLM SDK
-# from openai import OpenAI
-# import anthropic
-# import boto3
-# from google.cloud import aiplatform
+from dotenv import load_dotenv
+from fastapi import HTTPException
+from openai import OpenAI
+from pydantic import BaseModel
+
 
 client = OpenAI(base_url="https://models.github.ai/inference", api_key=os.environ["GITHUB_TOKEN"])
 load_dotenv(override=True)

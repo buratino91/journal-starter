@@ -1,8 +1,12 @@
 from datetime import UTC, datetime
 from uuid import uuid4
+from typing import Annotated
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, Aware
 
+import re
+
+VALID_FIELDS_REGEX = re.compile(r"^[A-Za-z0-9\s.,!?\-'\"]+$")
 
 class AnalysisResponse(BaseModel):
     """Response model for journal entry analysis."""
@@ -40,25 +44,29 @@ class Entry(BaseModel):
     # TODO: Add schema versioning
     # TODO: Add data sanitization methods
 
-    id: str = Field(
+    id: Annotated[str ,Field(
         default_factory=lambda: str(uuid4()),
-        description="Unique identifier for the entry (UUID)."
-    )
-    work: str = Field(
+        description="Unique identifier for the entry (UUID).",
+        gt=0
+    )]
+    work: Annotated[str ,Field(
         ...,
         max_length=256,
-        description="What did you work on today?"
-    )
-    struggle: str = Field(
+        description="What did you work on today?",
+        pattern=VALID_FIELDS_REGEX
+    )]
+    struggle: Annotated[str, Field(
         ...,
         max_length=256,
-        description="What’s one thing you struggled with today?"
-    )
-    intention: str = Field(
+        description="What’s one thing you struggled with today?",
+        pattern=VALID_FIELDS_REGEX
+    )]
+    intention: Annotated[str, Field(
         ...,
         max_length=256,
-        description="What will you study/work on tomorrow?"
-    )
+        description="What will you study/work on tomorrow?",
+        pattern=VALID_FIELDS_REGEX
+    )]
     created_at: datetime | None = Field(
         default_factory=lambda: datetime.now(UTC),
         description="Timestamp when the entry was created."

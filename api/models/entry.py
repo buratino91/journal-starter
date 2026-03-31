@@ -1,8 +1,8 @@
 from datetime import UTC, datetime
 from uuid import uuid4
+from typing import Annotated
 
-from pydantic import BaseModel, Field
-
+from pydantic import BaseModel, Field, field_validator
 
 class AnalysisResponse(BaseModel):
     """Response model for journal entry analysis."""
@@ -14,6 +14,7 @@ class AnalysisResponse(BaseModel):
         default_factory=lambda: datetime.now(UTC),
         description="Timestamp when the analysis was created"
     )
+
 
 
 class EntryCreate(BaseModel):
@@ -35,30 +36,41 @@ class EntryCreate(BaseModel):
     )
 
 class Entry(BaseModel):
-    # TODO: Add field validation rules
-    # TODO: Add custom validators
     # TODO: Add schema versioning
     # TODO: Add data sanitization methods
 
-    id: str = Field(
+    # Validate fields to not have empty characters (" ")
+    @field_validator("work", "struggle", "intention")
+    @classmethod
+    def not_blank(cls, v:str) -> str:
+        v= v.strip()
+        if not v:
+            raise ValueError("Fields cannot be blank or whitespace only")
+        return v
+
+    id: Annotated[str ,Field(
         default_factory=lambda: str(uuid4()),
-        description="Unique identifier for the entry (UUID)."
-    )
-    work: str = Field(
+        description="Unique identifier for the entry (UUID).",
+        gt=0
+    )]
+    work: Annotated[str ,Field(
         ...,
+        min_length=1,
         max_length=256,
-        description="What did you work on today?"
-    )
-    struggle: str = Field(
+        description="What did you work on today?",
+    )]
+    struggle: Annotated[str, Field(
         ...,
+        min_length=1,
         max_length=256,
-        description="What’s one thing you struggled with today?"
-    )
-    intention: str = Field(
+        description="What’s one thing you struggled with today?",
+    )]
+    intention: Annotated[str, Field(
         ...,
+        min_length=1,
         max_length=256,
-        description="What will you study/work on tomorrow?"
-    )
+        description="What will you study/work on tomorrow?",
+    )]
     created_at: datetime | None = Field(
         default_factory=lambda: datetime.now(UTC),
         description="Timestamp when the entry was created."

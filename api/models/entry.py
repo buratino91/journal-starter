@@ -2,11 +2,7 @@ from datetime import UTC, datetime
 from uuid import uuid4
 from typing import Annotated
 
-from pydantic import BaseModel, Field, Aware
-
-import re
-
-VALID_FIELDS_REGEX = re.compile(r"^[A-Za-z0-9\s.,!?\-'\"]+$")
+from pydantic import BaseModel, Field, field_validator
 
 class AnalysisResponse(BaseModel):
     """Response model for journal entry analysis."""
@@ -18,6 +14,7 @@ class AnalysisResponse(BaseModel):
         default_factory=lambda: datetime.now(UTC),
         description="Timestamp when the analysis was created"
     )
+
 
 
 class EntryCreate(BaseModel):
@@ -39,10 +36,17 @@ class EntryCreate(BaseModel):
     )
 
 class Entry(BaseModel):
-    # TODO: Add field validation rules
-    # TODO: Add custom validators
     # TODO: Add schema versioning
     # TODO: Add data sanitization methods
+
+    # Validate fields to not have empty characters (" ")
+    @field_validator("work", "struggle", "intention")
+    @classmethod
+    def not_blank(cls, v:str) -> str:
+        v= v.strip()
+        if not v:
+            raise ValueError("Fields cannot be blank or whitespace only")
+        return v
 
     id: Annotated[str ,Field(
         default_factory=lambda: str(uuid4()),
@@ -51,21 +55,21 @@ class Entry(BaseModel):
     )]
     work: Annotated[str ,Field(
         ...,
+        min_length=1,
         max_length=256,
         description="What did you work on today?",
-        pattern=VALID_FIELDS_REGEX
     )]
     struggle: Annotated[str, Field(
         ...,
+        min_length=1,
         max_length=256,
         description="What’s one thing you struggled with today?",
-        pattern=VALID_FIELDS_REGEX
     )]
     intention: Annotated[str, Field(
         ...,
+        min_length=1,
         max_length=256,
         description="What will you study/work on tomorrow?",
-        pattern=VALID_FIELDS_REGEX
     )]
     created_at: datetime | None = Field(
         default_factory=lambda: datetime.now(UTC),

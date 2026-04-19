@@ -12,6 +12,8 @@ Set OPENAI_API_KEY, and optionally OPENAI_BASE_URL and OPENAI_MODEL
 in your .env file. Settings are loaded by ``api.config.Settings``.
 """
 
+import json
+
 from openai import AsyncOpenAI
 
 from api.config import get_settings
@@ -62,7 +64,25 @@ async def analyze_journal_entry(
       4. Parse the assistant's JSON response with ``json.loads()``.
       5. Return a dict with ``entry_id``, ``sentiment``, ``summary``, ``topics``.
     """
-    raise NotImplementedError(
-        "Task 4: implement analyze_journal_entry using the openai SDK. "
-        "See tests/test_llm_service.py for the test contract."
+    if not client:
+        client = _default_client()
+
+    completion = await client.chat.completions.create(
+        model=get_settings().openai_model,
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a helpful assistant that analyzes journal entries. Extract the following information from the entry: 1. sentiment. 2. summary. 3. topics",
+            },
+            {"role": "user", "content": entry_text},
+        ],
     )
+
+    response = completion.choices[0].message.content
+    response = json.loads(response)
+    return {
+        "entry_id": entry_id,
+        "sentiment": response["sentiment"],
+        "summary": response["summary"],
+        "topics": response["topics"],
+    }

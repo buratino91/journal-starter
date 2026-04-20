@@ -64,7 +64,7 @@ async def analyze_journal_entry(
       4. Parse the assistant's JSON response with ``json.loads()``.
       5. Return a dict with ``entry_id``, ``sentiment``, ``summary``, ``topics``.
     """
-    if not client:
+    if client is None:
         client = _default_client()
 
     completion = await client.chat.completions.create(

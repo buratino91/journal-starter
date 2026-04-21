@@ -80,8 +80,10 @@ async def analyze_journal_entry(
     )
 
     response = completion.choices[0].message.content
+
     if response is None:
         raise ValueError("LLM returned no response content")
+
     response = json.loads(response)
     return {
         "entry_id": entry_id,

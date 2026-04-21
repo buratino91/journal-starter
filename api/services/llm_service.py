@@ -64,6 +64,7 @@ async def analyze_journal_entry(
       4. Parse the assistant's JSON response with ``json.loads()``.
       5. Return a dict with ``entry_id``, ``sentiment``, ``summary``, ``topics``.
     """
+
     if client is None:
         client = _default_client()
 
@@ -79,6 +80,8 @@ async def analyze_journal_entry(
     )
 
     response = completion.choices[0].message.content
+    if response is None:
+        raise ValueError("LLM returned no response content")
     response = json.loads(response)
     return {
         "entry_id": entry_id,

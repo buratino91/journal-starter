@@ -73,13 +73,14 @@ async def analyze_journal_entry(
         messages=[
             {
                 "role": "system",
-                "content": "You are a helpful assistant that analyzes journal entries. Extract the following information from the entry: 1. sentiment. 2. summary. 3. topics",
+                "content": "You are a helpful assistant that analyzes journal entries. Extract the following information from the entry and respond ONLY with a valid JSON object: "
+                "1. sentiment (string), 2. summary (string), 3. topics (list of strings). Do not include any explanation or extra text.",
             },
             {"role": "user", "content": entry_text},
         ],
     )
 
-    response = completion.choices[0].message.content
+    response = completion.choices[0].message.content  # response must be a json object
 
     if response is None:
         raise ValueError("LLM returned no response content")

@@ -31,7 +31,7 @@ class Settings(BaseSettings):
         description="Base URL for the OpenAI-compatible provider.",
     )
     openai_model: str = Field(
-        default="gpt-4o-mini",
+        default="openai.gpt-oss-120b",
         description="Model name passed to chat.completions.create().",
     )
 

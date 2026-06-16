@@ -15,9 +15,9 @@ jobs:
       - name: Install UV
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
       - name: Install dependencies
-        run: uv sync
+        run: uv sync --locked --all-extras
       - name: Run tests
-        run: uv run pytest
+        run: uv run pytest -v
 
   build-and-push-to-ecr:
     runs-on: ubuntu-latest

@@ -49,7 +49,9 @@ jobs:
         run: uv run pytest -v
 
   build-and-push-to-ecr:
-    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    runs-on: ubuntu-latest  
     needs: test
     steps:
       - name: Checkout repo
@@ -58,6 +60,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
+          audience: sts.amazonaws.com
           role-to-assume: arn:aws:iam::394151408055:role/GIthub-OIDC-Role
           aws-region: us-east-1
 

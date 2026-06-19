@@ -39,6 +39,12 @@ jobs:
       - name: Install dependencies
         run: uv sync --locked --all-extras
 
+      - name: Initialize database
+        run: |
+          PGPASSWORD=postgres psql \
+          -h localhost -U postgres -d career_journal \
+          -f database_setup.sql
+
       - name: Run tests
         run: uv run pytest -v
 

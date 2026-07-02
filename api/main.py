@@ -50,6 +50,17 @@ logging.getLogger().addHandler(handler)
 logging.getLogger().setLevel(logging.NOTSET)
 logging.getLogger().propagate = False
 
+root_logger = logging.getLogger()
+root_logger.setLevel(logging.INFO)
+
+stream_handler = logging.StreamHandler()
+stream_handler.setLevel(logging.INFO)
+
+formatter = logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s")
+stream_handler.setFormatter(formatter)
+
+root_logger.addHandler(stream_handler)
+
 logger1.info("Journal API started")
 
 app.include_router(journal_router)

@@ -7,6 +7,7 @@ from api.models.entry import AnalysisResponse, Entry, EntryCreate, EntryUpdate
 from api.repositories.postgres_repository import PostgresDB
 from api.services.entry_service import EntryService
 from api.services.llm_service import analyze_journal_entry
+from api.telemetry import get_create_entries_counter, logger1, tracer
 
 router = APIRouter()
 
@@ -22,14 +23,27 @@ async def get_entry_service(
 async def create_entry(
     entry_data: EntryCreate, entry_service: EntryService = Depends(get_entry_service)
 ):
+    with tracer.start_as_current_span("db.create_entry") as span:
+        span.set_attribute("http.request.method", "POST")
+        span.set_attribute("route", "/entries")
+
     """Create a new journal entry."""
     # Create the full entry with auto-generated fields
     entry = Entry(
         work=entry_data.work, struggle=entry_data.struggle, intention=entry_data.intention
     )
+    logger1.info("Creating entry")
 
     # Store the entry in the database
     created_entry = await entry_service.create_entry(entry.model_dump())
+
+    get_create_entries_counter().add(
+        1,
+        {
+            "route": "/entries",
+            "http.request.method": "POST",
+        },
+    )
 
     # Return success response (FastAPI handles datetime serialization automatically)
     return {"detail": "Entry created successfully", "entry": created_entry}

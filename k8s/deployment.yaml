@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: journal-api
+  labels:
+    app: journal-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: journal-api
+  template:
+    metadata:
+      labels:
+        app: journal-api
+    spec:
+      containers:
+      - name: journal-api
+        image: 394151408055.dkr.ecr.us-east-1.amazonaws.com/l2c/journal-app:latest
+        ports:
+          - containerPort: 8000
+      imagePullSecrets:
+        - name: ecr-secret
+

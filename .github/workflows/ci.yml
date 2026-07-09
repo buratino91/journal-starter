@@ -62,11 +62,6 @@ jobs:
         image: mcr.microsoft.com/dotnet/aspire-dashboard:latest
         ports:
           - 18888:18888
-        options: >-
-          --health-cmd "curl -f http://localhost:18888/health || exit 1"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     env:
       POSTGRES_USER: postgres

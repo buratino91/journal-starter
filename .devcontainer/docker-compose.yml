@@ -22,9 +22,24 @@ services:
       retries: 3
     networks:
       - otel-net
-
+  adot-collector:
+    image: public.ecr.aws/aws-observability/aws-otel-collector:latest
+    command: ["--config=/etc/otel-agent-config.yaml"]
+    volumes:
+      - ../otel-agent-config.yaml:/etc/otel-agent-config.yaml
+      - /home/glen/.aws:/root/.aws:ro
+    environment:
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    ports:
+      - "4317:4317" # OTEL gRPC receiver
+      - "4318:4318"
+    networks:
+      - otel-net
 volumes:
   postgres_data:
+
 
 networks:
   otel-net:

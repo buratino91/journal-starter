@@ -58,6 +58,8 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+      # Add aspire-dashboard service so that error messages will not be shown in the logs when running tests. 
+      # The aspire-dashboard service is not used by the tests, but it is required by the OpenTelemetry SDK to export metrics and traces.    
       aspire-dashboard:
         image: mcr.microsoft.com/dotnet/aspire-dashboard:latest
         ports:

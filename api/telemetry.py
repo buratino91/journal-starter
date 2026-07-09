@@ -33,7 +33,6 @@ def get_create_entries_counter():
     return initialize_metrics()
 
 
-# TODO: refactor telemetry.py
 def initialize_telemetry(service_name: str = "journal-api"):
     # Metrics setup
     exporter = OTLPMetricExporter(

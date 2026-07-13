@@ -3,6 +3,26 @@
 		"github": {
 			"type": "http",
 			"url": "https://api.githubcopilot.com/mcp/"
+		},
+		"AWS MCP Server": {
+			"command": "/usr/local/bin/uvx",
+			"args": [
+				"awslabs.aws-documentation-mcp-server"
+			],
+			"env": {
+				"FASTMCP_LOG_LEVEL": "ERROR"
+			}
+		},
+		"CloudWatch MCP Server": {
+			"command": "uvx",
+			"args": [
+				"awslabs.cloudwatch-mcp-server@latest"
+			],
+			"env": {
+				"AWS_PROFILE": "default",
+				"FASTMCP_LOG_LEVEL": "ERROR"
+			},
+			"type": "stdio"
 		}
 	},
 	"inputs": []

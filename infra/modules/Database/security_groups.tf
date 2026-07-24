@@ -3,13 +3,13 @@ module "db_security_group" {
 
   name        = "DB-SG"
   description = "Security group for database instances"
-  vpc_id      = module.vpc.vpc_id
+  vpc_id      = var.vpc_id
 
   ingress_rules = {
     all_from_api_servers = {
       ip_protocol = "-1"
       cidr_ipv4   = "0.0.0.0/0"
-      referenced_security_group_id = module.security_group.id
+      referenced_security_group_id = var.api_server_security_group_id
       description = "All traffic from API servers"
     }
     self-all = {

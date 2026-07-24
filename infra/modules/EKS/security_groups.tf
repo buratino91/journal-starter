@@ -4,7 +4,7 @@ module "api_server_security_group" {
 
   name        = "eks-api-server-sg"
   description = "Security group for EKS API server"
-  vpc_id      = module.vpc.vpc_id
+  vpc_id      = var.vpc_id
 
   ingress_rules = {
     https = {
@@ -27,7 +27,7 @@ module "api_server_security_group" {
     }
     all_from_db_servers = {
       ip_protocol                  = "-1"
-      referenced_security_group_id = module.db_security_group.id
+      referenced_security_group_id = var.db_security_group_id
       description                  = "All traffic from DB servers"
     }
     self-all = {
@@ -45,7 +45,7 @@ module "api_server_security_group" {
     }
     to_db_servers = {
       ip_protocol                  = "-1"
-      referenced_security_group_id = module.db_security_group.id
+      referenced_security_group_id = var.db_security_group_id
       description                  = "All traffic to DB servers"
     }
   }

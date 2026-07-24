@@ -8,7 +8,6 @@ module "eks" {
   # Optional
   endpoint_public_access = true
 
-  # Optional: Adds the current caller identity as an administrator via cluster access entry
   enable_cluster_creator_admin_permissions = true
 
   compute_config = {
@@ -16,12 +15,12 @@ module "eks" {
     node_pools = ["general-purpose"]
   }
 
-  vpc_id     = module.vpc.vpc_id
-  subnet_ids = module.vpc.public_subnets
-  node_security_group_id = module.api_server_security_group.id
-  
+  vpc_id     = var.vpc_id # from VPC module - have to declare as a var to access it here
+  subnet_ids = var.public_subnet_ids 
+  node_security_group_id = module.api_server_security_group.id # from child module
+   
   create_iam_role = false
-  iam_role_arn = module.api_server_security_group.security_group_arn
+  iam_role_arn = module.api_server_security_group.security_group_arn # from child module
 
 
   tags = {

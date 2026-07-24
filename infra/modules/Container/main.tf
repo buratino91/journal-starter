@@ -3,7 +3,7 @@ module "ecr" {
 
   repository_name = "l2c/journal-app"
 
-  repository_read_write_access_arns = [module.security.ecr_read_write_role_arn]
+  repository_read_write_access_arns = var.ecr_read_write_role_arn # from Security module
   repository_lifecycle_policy = jsonencode({
     rules = [
       {

@@ -19,7 +19,7 @@ module "db_security_group" {
     }
     allow_from_my_ip = {
       ip_protocol = "-1"
-      cidr_ipv4   = var.my_ip
+      cidr_ipv4   = var.my_ip # from terraform.tfvars
       description = "Allow all traffic from my IP address"
     }
   }

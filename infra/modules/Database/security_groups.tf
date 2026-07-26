@@ -17,6 +17,11 @@ module "db_security_group" {
       referenced_security_group_id = "self"
       description                  = "All traffic from members of this SG"
     }
+    allow_from_my_ip = {
+      ip_protocol = "-1"
+      cidr_ipv4   = var.my_ip
+      description = "Allow all traffic from my IP address"
+    }
   }
 
   egress_rules = {

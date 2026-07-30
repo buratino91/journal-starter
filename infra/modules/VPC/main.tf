@@ -1,7 +1,5 @@
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
-
-  name = "my-vpc"
   cidr = "10.16.0.0/24"
 
   azs             = ["us-east-1a", "us-east-1b", "us-east-1c"]
@@ -12,7 +10,7 @@ module "vpc" {
   enable_dns_hostnames = true
 
   tags = {
-        name = "journal-api-vpc"
+        name = "l2c-vpc"
     }
 
   

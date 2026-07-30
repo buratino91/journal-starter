@@ -3,32 +3,23 @@ variable "db_subnet" {
     type = string
 }
 
-variable "db_security_group_id" {
-    description = "The security group ID for the RDS instance"
-    type = string
-}
-
 variable "vpc_id" {
     description = "The VPC ID for the RDS instance"
     type = string
 }
 
-variable "api_server_security_group_id" {
-    description = "The security group ID for the EKS API server"
-    type = string
+variable "vpc_security_group_ids" {
+    description = "The security group ID to be associated to the database"
+    type = list(string)
 }
 
 variable "POSTGRES_DB" {
-    description = "The name of the database to create"
+    description = "Name of database server"
     type = string
 }
 
 variable "POSTGRES_PASSWORD" {
-    description = "The password for the PostgreSQL user"
+    description = "Master password of database server"
     type = string
-}
-
-variable "my_ip" {
-    description = "The IP address of the user for SSH access"
-    type = string
+    sensitive = true
 }

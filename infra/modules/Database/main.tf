@@ -8,12 +8,12 @@ module "rds" {
   engine_version           = "17"
 
   db_name  = var.POSTGRES_DB # from terraform.tfvars
-  password = var.POSTGRES_PASSWORD # from terraform.tfvars
+  password_wo = var.POSTGRES_PASSWORD # from terraform.tfvars
   username = "postgres"
   port     = 5432
   
   db_subnet_group_name = var.db_subnet
-  vpc_security_group_ids = var.db_security_group_id
+  vpc_security_group_ids = var.vpc_security_group_ids
 }
 
 resource "null_resource" "init_db" {

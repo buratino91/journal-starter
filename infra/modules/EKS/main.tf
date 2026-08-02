@@ -15,15 +15,15 @@ module "eks" {
     node_pools = ["general-purpose"]
   }
 
-  vpc_id     = var.vpc_id # from VPC module - have to declare as a var to access it here
-  subnet_ids = var.public_subnet_ids 
+  vpc_id                 = var.vpc_id # from VPC module - have to declare as a var to access it here
+  subnet_ids             = var.public_subnet_ids
   node_security_group_id = module.api_server_security_group.id # from child module
-   
+
   create_iam_role = false
-  iam_role_arn = module.api_server_security_group.security_group_arn # from child module
+  iam_role_arn    = module.api_server_security_group.security_group_arn # from child module
 
 
   tags = {
-    Terraform   = "true"
+    Terraform = "true"
   }
 }

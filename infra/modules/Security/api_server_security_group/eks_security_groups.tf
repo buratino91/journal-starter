@@ -51,6 +51,6 @@ module "api_server_security_group" {
   }
 
   tags = {
-    Terraform   = "true"
+    Terraform = "true"
   }
 }

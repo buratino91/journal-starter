@@ -7,10 +7,10 @@ module "db_security_group" {
 
   ingress_rules = {
     all_from_api_servers = {
-      ip_protocol = "-1"
-      cidr_ipv4   = "0.0.0.0/0"
+      ip_protocol                  = "-1"
+      cidr_ipv4                    = "0.0.0.0/0"
       referenced_security_group_id = var.api_server_security_group_id
-      description = "All traffic from API servers"
+      description                  = "All traffic from API servers"
     }
     self-all = {
       ip_protocol                  = "-1"
@@ -33,6 +33,6 @@ module "db_security_group" {
   }
 
   tags = {
-    Terraform   = "true"
+    Terraform = "true"
   }
 }

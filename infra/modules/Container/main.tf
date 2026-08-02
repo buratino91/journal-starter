@@ -23,6 +23,6 @@ module "ecr" {
   })
 
   tags = {
-    Terraform   = "true"
+    Terraform = "true"
   }
 }

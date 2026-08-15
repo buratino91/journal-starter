@@ -18,5 +18,7 @@ module "vpc" {
     name = "l2c-vpc"
   }
 
-
+  # TODO: 
+  # add vpc endpoints for AWS session manager to allow access to the bastion host (EC2 instance) without public IPs
+  # install session manager plugin on local machine
 }

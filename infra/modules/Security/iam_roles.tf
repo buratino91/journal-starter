@@ -49,7 +49,4 @@ resource "aws_iam_role_policy" "ecr_read_write_policy" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "ecr_read_write_policy_attachment" {
-  role       = aws_iam_role.ecr_read_write.name
-  policy_arn = aws_iam_role.ecr_read_write.arn
-}
+# TODO: check if import IAM role is correct for EKS: arn - arn:aws:iam::394151408055:role/aws-service-role/eks.amazonaws.com/AWSServiceRoleForAmazonEKS

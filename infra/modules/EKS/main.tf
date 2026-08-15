@@ -21,7 +21,7 @@ module "eks" {
 
   create_iam_role = false
   iam_role_arn    = module.api_server_security_group.security_group_arn # from child module
-
+  # TODO: confirm if this is the correct way to pass the IAM role ARN to the EKS module
 
   tags = {
     Terraform = "true"

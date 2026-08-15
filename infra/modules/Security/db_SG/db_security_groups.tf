@@ -8,7 +8,6 @@ module "db_security_group" {
   ingress_rules = {
     all_from_api_servers = {
       ip_protocol                  = "-1"
-      cidr_ipv4                    = "0.0.0.0/0"
       referenced_security_group_id = var.api_server_security_group_id
       description                  = "All traffic from API servers"
     }
@@ -18,9 +17,11 @@ module "db_security_group" {
       description                  = "All traffic from members of this SG"
     }
     allow_from_my_ip = {
-      ip_protocol = "-1"
+      ip_protocol = "tcp"
+      from_port   = 5432
+      to_port     = 5432
       cidr_ipv4   = var.my_ip # from terraform.tfvars
-      description = "Allow all traffic from my IP address"
+      description = "Allow access to database from my IP address"
     }
   }
 

@@ -6,6 +6,8 @@ module "rds" {
   instance_class = "db.t3.micro"
   engine         = "postgres"
   engine_version = "17"
+  allocated_storage = 5
+  publicly_accessible = true
 
   db_name     = var.POSTGRES_DB       # from terraform.tfvars
   password_wo = var.POSTGRES_PASSWORD # from terraform.tfvars
@@ -28,7 +30,7 @@ resource "null_resource" "init_db" {
   provisioner "local-exec" {
     command = <<EOT
       PGPASSWORD=${var.POSTGRES_PASSWORD}
-      psql -h ${module.rds.db_instance_endpoint} -U postgres -d ${var.POSTGRES_DB}  -f ../../database_setup.sql
+      psql -h ${module.rds.db_instance_address} -p ${module.rds.db_instance_port} -U postgres -d ${var.POSTGRES_DB}  -f ../../database_setup.sql
     EOT
   }
 }

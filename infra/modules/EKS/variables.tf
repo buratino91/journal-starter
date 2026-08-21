@@ -8,7 +8,6 @@ variable "public_subnet_ids" {
   type        = list(string)
 }
 
-variable "db_security_group_id" {
-  description = "The ID of the security group for the database"
-  type        = string
+variable "api_server_security_group_id" {
+  description = "ID of security group to be attached to"
 }

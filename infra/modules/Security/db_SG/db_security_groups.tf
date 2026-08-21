@@ -16,12 +16,12 @@ module "db_security_group" {
       referenced_security_group_id = "self"
       description                  = "All traffic from members of this SG"
     }
-    allow_from_my_ip = {
-      ip_protocol = "tcp"
-      from_port   = 5432
-      to_port     = 5432
-      cidr_ipv4   = var.my_ip # from terraform.tfvars
-      description = "Allow access to database from my IP address"
+    postgres_from_ec2 = {
+      from_port = 5432
+      to_port = 5432
+      protocol = "tcp"
+      referenced_security_group_id = var.ec2_security_group_id
+      description = "Allow PostgreSQL from EC2"
     }
   }
 
@@ -30,6 +30,12 @@ module "db_security_group" {
       ip_protocol = "-1"
       cidr_ipv4   = "0.0.0.0/0"
       description = "Allow all outbound traffic for downloads and updates"
+    }
+    https_to_endpoint_sg = {
+      ip_protocol = "https"
+      from_port = 443
+      referenced_security_group_id = var.endpoint_SG_id
+      description = "allow HTTPS to VPC endpoints security group for SSM"
     }
   }
 

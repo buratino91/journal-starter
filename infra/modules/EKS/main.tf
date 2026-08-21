@@ -17,11 +17,9 @@ module "eks" {
 
   vpc_id                 = var.vpc_id # from VPC module - have to declare as a var to access it here
   subnet_ids             = var.public_subnet_ids
-  node_security_group_id = module.api_server_security_group.id # from child module
+  node_security_group_id = var.api_server_security_group_id 
 
-  create_iam_role = false
-  iam_role_arn    = module.api_server_security_group.security_group_arn # from child module
-  # TODO: confirm if this is the correct way to pass the IAM role ARN to the EKS module
+  create_iam_role = true
 
   tags = {
     Terraform = "true"

@@ -17,7 +17,7 @@ module "eks" {
 
   vpc_id                 = var.vpc_id # from VPC module - have to declare as a var to access it here
   subnet_ids             = var.public_subnet_ids
-  node_security_group_id = var.api_server_security_group_id 
+  node_security_group_id = var.node_security_group_id
 
   create_iam_role = true
 

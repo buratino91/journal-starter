@@ -23,6 +23,8 @@ module "db_security_group" {
   vpc_id                       = module.vpc.vpc_id
   api_server_security_group_id = module.api_server_security_group.api_server_security_group_id
   my_ip                        = var.my_ip
+  ec2_security_group_id        = module.ec2_security_group.ec2_security_group_id
+  endpoint_SG_id               = module.endpoint_security_group.endpoint_SG_id
 }
 
 module "api_server_security_group" {
@@ -54,11 +56,9 @@ resource "aws_ecr_repository" "journal-app" {
 module "eks" {
   source            = "./modules/EKS"
   vpc_id            = module.vpc.vpc_id
-  subnet_ids = module.vpc.public_subnet_ids
+  public_subnet_ids = module.vpc.public_subnets
   #  The left-side name in the module call must match a variable declared inside that module
-  #  modules/EKS/variables.tf: variable "api_server_security_group_id" { ... }
-  # root main.tf: module "eks" { api_server_security_group_id = module.api_server_security_group.api_server_security_group_id }
-  node_security_group_id = module.api_server_security_group.id
+  node_security_group_id = module.api_server_security_group.api_server_security_group_id
 }
 
 module "ec2_security_group" {
@@ -82,4 +82,5 @@ module "vpc_endpoints" {
   source             = "./modules/VPC_endpoints"
   vpc_id             = module.vpc.vpc_id
   security_group_ids = [module.endpoint_security_group.endpoint_SG_id]
+  private_subnet_ids = [module.vpc.private_subnets]
 }

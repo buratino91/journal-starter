@@ -5,7 +5,7 @@ module "vpc_endpoints" {
   version = "6.6.1"
 
   vpc_id             = var.vpc_id
-  security_group_ids = [var.vpc_endpoint_security_group_id]
+  security_group_ids = var.security_group_ids
 
   endpoints = {
     ssm = {

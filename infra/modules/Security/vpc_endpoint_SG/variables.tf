@@ -4,6 +4,6 @@ variable "referenced_security_group_id" {
 }
 
 variable "vpc_id" {
-    description = "ID of VPC"
+    description = "ID of VPC to be associated to"
     type = string
 }

@@ -18,7 +18,7 @@ module "endpoint_security_group" {
         from_port                = 443
         to_port                  = 443
         protocol                 = "tcp"
-        referenced_security_group_id = var.ec2_security_group_id 
+        referenced_security_group_id = var.referenced_security_group_id
         description              = "Allow HTTPS from EC2 for SSM"
     }
     }

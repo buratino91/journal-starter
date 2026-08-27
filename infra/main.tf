@@ -38,19 +38,17 @@ module "rds" {
   db_subnet              = module.vpc.private_subnets
   vpc_id                 = module.vpc.vpc_id
   vpc_security_group_ids = [module.db_security_group.db_security_group_id]
-  POSTGRES_DB            = var.POSTGRES_DB       # passed via tfvars file
-  POSTGRES_PASSWORD      = var.POSTGRES_PASSWORD # passed via tfvars file
+  POSTGRES_DB            = var.POSTGRES_DB   # passed via tfvars file
+  POSTGRES_USER          = var.POSTGRES_USER # passed via tfvars file
 }
 
 module "iam_roles" {
   source = "./modules/Security"
 }
 
-resource "aws_ecr_repository" "journal-app" {
+data "aws_ecr_repository" "journal-app" {
   name = "l2c/journal-app"
-  lifecycle {
-    prevent_destroy = true
-  }
+
 }
 
 module "eks" {
@@ -68,8 +66,10 @@ module "ec2_security_group" {
 
 module "ec2-instance" {
   source                 = "./modules/EC2"
-  subnet_id              = module.vpc.private_subnets
+  subnet_id              = module.vpc.private_subnets[0]
   vpc_security_group_ids = [module.ec2_security_group.ec2_security_group_id]
+  POSTGRES_USER          = var.POSTGRES_USER
+  POSTGRES_DB            = var.POSTGRES_DB
 }
 
 module "endpoint_security_group" {
@@ -82,5 +82,37 @@ module "vpc_endpoints" {
   source             = "./modules/VPC_endpoints"
   vpc_id             = module.vpc.vpc_id
   security_group_ids = [module.endpoint_security_group.endpoint_SG_id]
-  private_subnet_ids = [module.vpc.private_subnets]
+  private_subnet_ids = module.vpc.private_subnets
+}
+
+output "instance_id" {
+  value = module.ec2-instance.instance_id
+}
+
+# S3 bucket for delivering database setup file to EC2 instance via SSM
+resource "aws_s3_bucket" "l2c_bucket" {
+  bucket = "l2c-bucket"
+
+  tags = {
+    Name        = "l2c-bucket"
+    Environment = "Dev"
+  }
+}
+
+resource "null_resource" "upload_db_setup_file" {
+  depends_on = [aws_s3_bucket.l2c_bucket]
+
+  provisioner "local-exec" {
+    command = <<EOT
+      aws s3 cp ../database_setup.sql s3://${aws_s3_bucket.l2c_bucket.id}
+    EOT
+  }
+}
+
+resource "aws_s3_object" "db_setup_file" {
+  bucket = aws_s3_bucket.l2c_bucket.id
+  key    = "database_setup.sql"
+  source = "./database_setup.sql"
+
+  depends_on = [aws_s3_bucket.l2c_bucket]
 }

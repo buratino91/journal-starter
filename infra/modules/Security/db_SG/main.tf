@@ -32,7 +32,7 @@ module "db_security_group" {
       description = "Allow all outbound traffic for downloads and updates"
     }
     https_to_endpoint_sg = {
-      ip_protocol = "https"
+      ip_protocol = "tcp"
       from_port = 443
       referenced_security_group_id = var.endpoint_SG_id
       description = "allow HTTPS to VPC endpoints security group for SSM"

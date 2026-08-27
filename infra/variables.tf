@@ -14,8 +14,7 @@ variable "POSTGRES_DB" {
   type        = string
 }
 
-variable "POSTGRES_PASSWORD" {
-  description = "Master password of DB server"
+variable "POSTGRES_USER" {
+  description = "Username for the database server"
   type        = string
-  sensitive   = true
 }

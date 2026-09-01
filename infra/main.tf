@@ -104,15 +104,31 @@ resource "null_resource" "upload_db_setup_file" {
 
   provisioner "local-exec" {
     command = <<EOT
-      aws s3 cp ../database_setup.sql s3://${aws_s3_bucket.l2c_bucket.id}
+      aws s3 cp ../database_setup.sql s3://${aws_s3_bucket.l2c_bucket.id}/database_setup.sql
     EOT
   }
 }
 
+# Provides an object resource for the EC2 instance 
 resource "aws_s3_object" "db_setup_file" {
   bucket = aws_s3_bucket.l2c_bucket.id
   key    = "database_setup.sql"
   source = "./database_setup.sql"
 
   depends_on = [aws_s3_bucket.l2c_bucket]
+}
+
+// Pull file from S3 and run it on EC2 instance via SSM
+resource "null_resource" "init_db" {
+  depends_on = [aws_s3_object.db_setup_file, module.ec2-instance]
+
+  provisioner "local-exec" {
+    command = <<EOT
+      instance_id = $${terraform output -raw instance_id}
+      aws ssm send-command \
+        --instance-ids $instance_id \
+        --document-name "AWS-RunShellScript" \
+        --parameters commands='["aws s3 cp s3://$${aws_s3_bucket.l2c_bucket.id}/database_setup.sql /home/ec2-user"]'
+    EOT
+  }
 }

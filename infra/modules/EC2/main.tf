@@ -16,18 +16,3 @@ module "ec2-instance" {
         Name = "l2c-ec2-instance"
     }
 }
-
-//Pull file from S3 and run it on EC2 instance via SSM
-resource "null_resource" "init_db" {
-  depends_on = [aws_s3_object.db_setup_file, module.ec2-instance]
-
-  provisioner "local-exec" {
-    command = <<EOT
-      instance_id = ${terraform output -raw instance_id}
-      aws ssm send-command \
-        --instance-ids $instance_id \
-        --document-name "AWS-RunShellScript" \
-        --parameters commands='["aws s3 cp s3://${aws_s3_bucket.l2c_bucket.id}/database_setup.sql /home/ec2-user"]'
-    EOT
-  }
-}

@@ -8,6 +8,7 @@ module "ec2-instance" {
     iam_role_description        = "IAM role for EC2 instance for SSM"
     iam_role_policies = {
     AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+    AmazonS3FullAccess = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
     }
 
     vpc_security_group_ids = var.vpc_security_group_ids # from module ec2_security_group

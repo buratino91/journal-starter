@@ -125,15 +125,13 @@ resource "null_resource" "init_db" {
 
   provisioner "local-exec" {
     command = <<EOT
-      instance_id="$(terraform output -raw instance_id)"
       aws ssm send-command \
-        --instance-ids "$instance_id" \
+        --instance-ids "${module.ec2-instance.instance_id}" \
         --document-name "AWS-RunShellScript" \
-        --parameters 'commands=["aws s3 cp s3://${aws_s3_bucket.l2c_bucket.id}/database_setup.sql /home/ssm-user"]'
+        --parameters 'commands=[
+        "cd $HOME" && aws s3 cp s3://${aws_s3_bucket.l2c_bucket.id}/database_setup.sql .",
+        "sudo dnf install -y postgresql18"
+        ]'
     EOT
   }
 }
-
-# TODO: 
-# 1. attach policy in ec2/main.tf to allow EC2 to cp files from S3
-# 2. run commands to install psql

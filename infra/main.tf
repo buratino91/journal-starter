@@ -46,6 +46,7 @@ module "iam_roles" {
   source = "./modules/Security"
 }
 
+# So that terraform wont need to manage this as we do not want it to be deleted when we destroy the stack
 data "aws_ecr_repository" "journal-app" {
   name = "l2c/journal-app"
 
@@ -113,7 +114,7 @@ resource "null_resource" "upload_db_setup_file" {
 resource "aws_s3_object" "db_setup_file" {
   bucket = aws_s3_bucket.l2c_bucket.id
   key    = "database_setup.sql"
-  source = "./database_setup.sql"
+  source = "${path.module}/../database_setup.sql"
 
   depends_on = [aws_s3_bucket.l2c_bucket]
 }
@@ -124,11 +125,15 @@ resource "null_resource" "init_db" {
 
   provisioner "local-exec" {
     command = <<EOT
-      instance_id = $${terraform output -raw instance_id}
+      instance_id="$(terraform output -raw instance_id)"
       aws ssm send-command \
-        --instance-ids $instance_id \
+        --instance-ids "$instance_id" \
         --document-name "AWS-RunShellScript" \
-        --parameters commands='["aws s3 cp s3://$${aws_s3_bucket.l2c_bucket.id}/database_setup.sql /home/ec2-user"]'
+        --parameters 'commands=["aws s3 cp s3://${aws_s3_bucket.l2c_bucket.id}/database_setup.sql /home/ssm-user"]'
     EOT
   }
 }
+
+# TODO: 
+# 1. attach policy in ec2/main.tf to allow EC2 to cp files from S3
+# 2. run commands to install psql

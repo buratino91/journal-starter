@@ -114,7 +114,7 @@ resource "null_resource" "upload_db_setup_file" {
 resource "aws_s3_object" "db_setup_file" {
   bucket = aws_s3_bucket.l2c_bucket.id
   key    = "database_setup.sql"
-  source = "${path.module}/../database_setup.sql"
+  source = "${path.module}/../database_setup.sql" # path.module expands to the current module directory. database_setup.sql is located in the parent directory of the current module directory
 
   depends_on = [aws_s3_bucket.l2c_bucket]
 }
@@ -129,7 +129,7 @@ resource "null_resource" "init_db" {
         --instance-ids "${module.ec2-instance.instance_id}" \
         --document-name "AWS-RunShellScript" \
         --parameters 'commands=[
-        "cd $HOME" && aws s3 cp s3://${aws_s3_bucket.l2c_bucket.id}/database_setup.sql .",
+        "cd $HOME && aws s3 cp s3://${aws_s3_bucket.l2c_bucket.id}/database_setup.sql .",
         "sudo dnf install -y postgresql18"
         ]'
     EOT

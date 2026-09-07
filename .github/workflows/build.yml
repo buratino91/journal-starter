@@ -50,6 +50,8 @@ jobs:
 
   build-and-push-to-ecr:
     permissions:
+      contents: read
+      packages: write
       id-token: write
     runs-on: ubuntu-latest  
     needs: test
@@ -68,11 +70,25 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, tag, and push image to Amazon ECR
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build, tag, and push image to Amazon ECR and GHCR
         env:
             REGISTRY: ${{ steps.login-ecr.outputs.registry }}
             REPOSITORY: l2c/journal-app
+            GHCR_IMAGE: ghcr.io/${{ github.repository }}/journal-app
             IMAGE_TAG: latest
         run: |
-            docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-            docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+            $GHCR_IMAGE = $(echo $GHCR_IMAGE | tr '[:upper:]' '[:lower:]')
+            docker build -t \
+            "$REGISTRY/$REPOSITORY:$IMAGE_TAG" \
+            "$GHCR_IMAGE:$IMAGE_TAG" \
+            .
+
+            docker push "$REGISTRY/$REPOSITORY:$IMAGE_TAG"
+            docker push "$GHCR_IMAGE:$IMAGE_TAG"

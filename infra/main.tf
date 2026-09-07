@@ -135,3 +135,7 @@ resource "null_resource" "init_db" {
     EOT
   }
 }
+
+output "db_instance_endpoint" {
+  value = module.rds.db_instance_endpoint
+}

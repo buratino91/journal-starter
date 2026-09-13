@@ -150,7 +150,7 @@ jobs: # Each job runs in a separate runner
     needs: build-and-push
     runs-on: ubuntu-latest
     
-    permissions::
+    permissions:
       id-token: write
       contents: read
     steps:

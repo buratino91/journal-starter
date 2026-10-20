@@ -187,5 +187,5 @@ jobs: # Each job runs in a separate runner
             --name journal-api-eks \
             --region us-east-1
 
-      # - name: Deploy using helm
+      # - name: Deploy using helm 
         

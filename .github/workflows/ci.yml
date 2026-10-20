@@ -137,7 +137,7 @@ jobs: # Each job runs in a separate runner
             GHCR_IMAGE: ghcr.io/${{ github.repository }}/journal-app
             IMAGE_TAG: latest
         run: |
-            $GHCR_IMAGE = $(echo $GHCR_IMAGE | tr '[:upper:]' '[:lower:]')
+            GHCR_IMAGE="$(printf '%s' "$GHCR_IMAGE" | tr '[:upper:]' '[:lower:]')"
             docker build \
             -t "$REGISTRY/$REPOSITORY:$IMAGE_TAG" \
             -t "$GHCR_IMAGE:$IMAGE_TAG" \

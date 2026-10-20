@@ -153,6 +153,11 @@ jobs: # Each job runs in a separate runner
     permissions:
       id-token: write
       contents: read
+    
+    environment:
+      name: production
+      url: https://
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v6
@@ -176,11 +181,11 @@ jobs: # Each job runs in a separate runner
           role-to-assume: arn:aws:iam::394151408055:role/GIthub-OIDC-Role
           aws-region: us-east-1
 
-      - name: Connect to EKS
+      - name: Connect kubectl to EKS
         run: |
           aws eks update-kubeconfig \
             --name journal-api-eks \
             --region us-east-1
 
-      - name: Deploy using helm
+      # - name: Deploy using helm
         

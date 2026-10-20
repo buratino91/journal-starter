@@ -138,9 +138,9 @@ jobs: # Each job runs in a separate runner
             IMAGE_TAG: latest
         run: |
             $GHCR_IMAGE = $(echo $GHCR_IMAGE | tr '[:upper:]' '[:lower:]')
-            docker build -t \
-            "$REGISTRY/$REPOSITORY:$IMAGE_TAG" \
-            "$GHCR_IMAGE:$IMAGE_TAG" \
+            docker build \
+            -t "$REGISTRY/$REPOSITORY:$IMAGE_TAG" \
+            -t "$GHCR_IMAGE:$IMAGE_TAG" \
             .
 
             docker push "$REGISTRY/$REPOSITORY:$IMAGE_TAG"
